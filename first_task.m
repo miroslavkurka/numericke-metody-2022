@@ -20,26 +20,27 @@ for i=1:n
 endfor
 
 # fill the V matrix
-    
+
+
 for i=1:n
   for j=1:n
     if i==1 && j==1
-      V(i,j)=k;
+      V(i,j)=n;
     else
-      V(i,j)=sum(t_i.^(i+j)-2);
+      V(i,j)=sum(t_i.^(i+j-2));
     endif
     endfor
 endfor
     
 
-st=7;
+st=6;
 # get each degree polynomial by slicing the V 
 for pos=1:st
-    if st-pos==0, break; end # end for loop since 0x0 doesnt exist, and indexing is nightmare in matlab
-    V=V(1:st-pos,1:st-pos); # reverse slicing, we reduce matrix from to 6x6 to 5x5 ...
-    Y=Y(1:st-pos);
+    #if st-pos==0, break; end # end for loop since 0x0 doesnt exist, and indexing is nightmare in matlab
+    V=V(1:st-pos+1,1:st-pos+1); # reverse slicing, we reduce matrix from to 6x6 to 5x5 ...
+    Y=Y(1:st-pos+1);
     a_coefficients=V\Y;
-    lst_func=polyval(flip(a_coefficients),y_i);
+    lst_func=polyval(flip(a_coefficients),t_i);
     residues(pos)= sum((y_i-lst_func).^2);
 endfor
 # flip the residues since by slicing we got 6x6 ie k=6 first 
@@ -56,11 +57,11 @@ matlab_residues=[];
 
 for i=1:6
     a_matlab_coefficients=polyfit(t_i,y_i,i);
-    mat_func=polyval(a_matlab_coefficients,y_i);
+    mat_func=polyval(a_matlab_coefficients,t_i);
     matlab_residues(i)=sum((y_i-mat_func).^2);
 endfor
 
-semilogy(poly_degrees, matlab_residues,"red")
+semilogy(poly_degrees, matlab_residues)
 legend("Our Method","MATLAB polyfit")
 xlabel("Degrees of polynomial")
 ylabel("Residue")
