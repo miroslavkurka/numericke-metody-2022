@@ -1,3 +1,5 @@
+#Released under MIT License 
+#Copyright (c) 2022 Miroslav Kurka
 pkg load symbolic
 t_i = [2 2.5 3 3.5 4 4.5 5];
 y_i = [7.14 6.56 5.98 5.55 5.71 6.01 6.53];
@@ -38,7 +40,7 @@ N(x)=coefficients(1)+coefficients(2)*(x-t_i(1))+coefficients(3)*((x-t_i(1))*(x-t
 my_function=simplify(N(x))
 
 syms L(x) # polynomial from the first hw
-L(x) = 5*x+1
+L(x) = 5*x+1 # this is just template, because my polynomial from hw1 isnt precise enough:
 
 #p_eval=polyval(my,t_i);
 h=ezplot(my_function,[0, 10]);
@@ -48,12 +50,14 @@ hold on
 plot(X,Y)
 set(gca, 'XLim', [0 10], 'YLim', [4 15]);
 plot(t_i,y_i,'x')
+xlabel("t_i")
+ylabel("y_i")
 hold off
 
 
 # part b Horner vs normal
 eval_func=matlabFunction(my_function); # cast symbolic expression to function handle else the feval wont work
-n_dimension=10
+n_dimension=1000
 rand_val=rand(n_dimension,n_dimension);
 tic
 for i=1:n_dimension
