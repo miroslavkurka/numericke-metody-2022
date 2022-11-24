@@ -19,7 +19,7 @@ for j=2:n
         for_diff(i,j)=for_diff(i+1,j-1)-for_diff(i,j-1);
     endfor
 endfor
-for_diff;
+for_diff
 # get coefficents
 coefficients=zeros(1,length(y_i));
 facts=factorial(1:n);
@@ -57,7 +57,7 @@ hold off
 
 # part b Horner vs normal
 eval_func=matlabFunction(my_function); # cast symbolic expression to function handle else the feval wont work
-n_dimension=1000
+n_dimension=1
 rand_val=rand(n_dimension,n_dimension);
 tic
 for i=1:n_dimension
