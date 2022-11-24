@@ -68,29 +68,30 @@ presnosti na 6 desatinných miest? Výsledok porovnajte s výsledkom obdŕžaný
 pomocou Octavovskej funkcie \emph{fsolve}.
 
 \subsection{Teória}\label{sec:nothing}
-Metoda je zalozena na $$x_i=x_{i-1}-\frac{f(x_i)}_{\frac{df(x_i)}{dx_i}}$$.
-\subsubsection{Algoritmus}\label{sec:nothing2}
-V prvom kroku inicializujeme maticu dopredných diferencií, kde prvý stĺpec sú hodnoty $y_i$.
-Daľej napĺňame maticu do trojuholníkového tvaru, ten dosiahneme indexovanim cez druhú for slučku
-od 1 po $n-j+1$, kde +1 je kvôli indexovaniu matlab polí od 1. V ďalšom kroku inicializujeme pole koeficientov a faktoríal cez vsatvanú funkciu. Následne napĺňame pole koeficientov, prvá hodnota je zo vzorca rovná $y_1$, ďalej cez for slučku výpočítavame daľšie hodnoty podľa vzorca $C_i=\frac{\Delta^iy_0}{i!(x_1-x_0)^i}$, kde -1 sú opäť kvôli indexácií. Z balíčka \emph{symbolic} využijeme funkciu \emph{syms}, ktorá slúži na definíciu funkcií. Zadefinujeme newtonov polynóm s doplnenými koeficientami a interpolačnými bodmi. Funkciou simplify zjednodušíme. Funkciou \emph{matLabFunction} "castneme" typ premennej do function handle, tento krok je potrebný na druhú časť zadania. V druhej časti
-vytvoríme maticu 1000x1000 náhodných čísel. V prvom kroku prechádzame maticu a dosadzujeme cez dor slučky čísla do polynómu, kde funckiou feval výpočítavame polynóm. V druhom kroku robíme to isté len využívame funckiu horner na úpravu polynomu do hornerového tvaru. Pri obidvoch metódach meriame čas pomocou tic toc funckie 
+Newtonovu metódu, nazývanú tiež metóda dotyčníc, môžeme použiť na riešenie rovnice $f(x) = 0$ ak je funkcia dvakrát diferencovateľná a funkcia $f(x)$ v intervale $\langle a, b \rangle$  nemení znamienko (je nenulová), pričom zároveň platí $f(a)f(b) < 0$ ($\langle a, b \rangle$ je interval separácie)\cite{Bsp}
 
+Zostrojme dotyčnicu v arbitrárne zvolenom bode $x_0$:
+$$f(x)=f(x_0)+f'(x_0)(x-x_0)$$
+
+zaujímame sa o priesečník dotyčnice s osou x, teda môžeme dosadiť $f(x)=0$. Rovnica vyzerá nasledujúco $f(x_0)+f'(x_0)(x-x_0)=0$. Po úprave a zovšeobecnení indexov získavame rekurentý vzťah:
+
+$$x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}$$
+
+Týmto spôsobom vieme aproximovať riešenie funkcie s odchyľkou závislej na počte iterácií.
+
+\subsubsection{Algoritmus}\label{sec:nothing2}
+Zadefinujeme prvú iteráciu a počiatočný bod a premennú $i$, ktorá bude držať počet iterácii. Následne cez balík \emph{symbolic} definujeme funkciu ku ktorej aproximujeme riešenie a deriváciu tejto funkcie. V cykle while uvedieme ako podmienku dostatočného riešenia: absolútna hodnota rozdielu výsledkov $x$ po sebe idúcich iteračných krokoch je väčšia ako $10^-6$. V cykle prechadzujeme $x_n$ na $x_{n+1}$ a vypočitame $x_{n+1}$. K premennej $i$ pripočítame 1. Výsledok uložíme do premennej a zmeníme typ na \emph{double}. Vypočítame tú istú rovnicu cez matlab definovanú funkciu \emph{fsolve}. 
 \subsection{Výsledky}\label{sec:nothing}
-Z grafu vidíme, že interpolačný polynóm prechádza presne bodmi v čom sa líší s polynómom z prvého zadania. Polynóm LSM\footnote{Polynóm v grafe nie je z dôvodu, že mi nepresne vychádza v prvej úlohe.} z prvého zadania neprechádza presne zadanými bodmi, jedná sa o aproximáciu nie o interpoláciu. Newtonov polynóm prechádza bodmi ale má napríklad nevýhodu vlnivosti. 
-\begin{figure}[!htb]
-\includegraphics[scale=0.5]{graphnw.png}
-\centering
-\end{figure}
-Pri meraní rýchlosti výpočtov ak je veľkosť matice 10x10 tak je rozdiel metód pár stotín sekúnd avšak ak je veľkosť matice 1000x1000 rozdiel časov je razantný. Pre klasický výpočet je to 17.6557 sekúnd. Pre výpočet cez hornerov tvar je tento čas zredukovaný na 0.000777006 sekúnd.
+Pri výpočte sa vyskytol problém dosadzovania do funkcii z balíka \emph{symbolic}, ktorý bol vyriešený premennou typu na double. Po siedmych iteráciach sa while cyklus zastavil. Dostali sme výsledok $my\_result = 1.494976$ a následne výsledok z funkcie \emph{fsolve} $matlab\_calculation\_result = 1.494976$.
+
+
 
 \subsection{Záver}\label{sec:nothing}
-Dosiahli sme dostatočne presného Polynómu na interpoláciu našich dát. Rozdiel medzi LSM a Newtonovou metódu je v prístupe metód k bodom zadaných dát. Pri skumaní rýchlosti výpočtov bolo zistené, že za pomoci horneroveho tvaru polynómu je dosiahnúté výrazné zrýchlenie a to z dôvodu, že pri hornerovom tvare zredukujeme počet násobení z $(n^2 + n)/2$ na $n$ násobení\cite{wiki}.  
+Na presnosť 6 desatinných miest sa naša implematácia od nátivnej funkcie \emph{fsolve} nelíší. Je potrebných 7 iterácií aby sme dosiahli presnosti funkcie \emph{fsolve}.
 % Bibliography
 %-----------------------------------------------------------------
 \begin{thebibliography}{99}
-\bibitem{Bsp} Buša, J., Pirč, V. and Schrötter, Š. (no date) \emph{Numerické metódy, pravdepodobnosť a matematická štatistika}, p. 263.
-\bibitem{wiki} \url{https://en.wikipedia.org/wiki/Horner%27s_method#Efficiency}
-
+\bibitem{Bsp} Buša, J., Pirč, V. and Schrötter, Š. (no date) \emph{Numerické metódy, pravdepodobnosť a matematická štatistika}
 \end{thebibliography}
 
 \end{document}

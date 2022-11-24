@@ -14,7 +14,7 @@ while abs(x_next-x_current) > 10^-6
   x_next=x_current - double(f(x_current))/double(df(x_current));
   i++;
 end
-
+format long
 my_result=double(x_next)
 matlab_calculation_result= fsolve(matlabFunction(f(t)),t=1)
 i
