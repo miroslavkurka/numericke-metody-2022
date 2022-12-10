@@ -1,0 +1,118 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Template for a LaTex article in Slovak.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[slovak]{babel}
+\usepackage[document]{ragged2e}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{multicol}
+\usepackage{textcomp}
+\usepackage{amsmath, amsthm, amsfonts}
+\usepackage{graphicx}
+\usepackage{url}
+
+% Theorems
+%-----------------------------------------------------------------
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+% Shortcuts.
+% One can define new commands to shorten frequently used
+% constructions. As an example, this defines the R and Z used
+% for the real and integer numbers.
+%-----------------------------------------------------------------
+\def\RR{\mathbb{R}}
+\def\ZZ{\mathbb{Z}}
+
+% Similarly, one can define commands that take arguments. In this
+% example we define a command for the absolute value.
+% -----------------------------------------------------------------
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+
+% Operators
+% New operators must defined as such to have them typeset
+% correctly. As an example we define the Jacobian:
+% -----------------------------------------------------------------
+\DeclareMathOperator{\Jac}{Jac}
+
+%-----------------------------------------------------------------
+\title{Newtonová metóda riešenie rovníc}
+\author{Miroslav Kurka\\
+  \small Dept. of Biophysics\\
+  \small Pavol Jozef Šafárik University in Košice\\
+  \small Slovakia 
+}
+
+\begin{document}
+\maketitle
+
+
+\section{Úloha}
+ Vypočítajte daný integrál so zadanou presnosťou ε pomocou lichobežníkovej a Simpsonovej metódy. Koľko delení intervalu je potrebných pri jednotlivých metódach k dosiahnutiu požadovanej presnosti? Následne preveďte výpočty s využitím funkcií softvéru Octave trapz a quadv. Porovnajte aj z presným riešením.
+$$\int_{0}^{5} \frac{x}{(4+x^2)} \,dx$$
+
+
+\subsection{Teória}\label{sec:nothing}
+Obidve metódy používajú delenie intervalu na menšie časti. Integrál potom aproximujú následovne:
+\begin{itemize}
+	\item Lichobežníková metóda je založená na aproximácii integrálu sčítaním lichobežníkov pod krivkou cez podintervaly.\cite{Bsp}
+\item  Simpsonova metóda je založená na aproximácii integrálu za pomoci parabolickej krivky.\cite{Bsp}
+\end{itemize}
+
+\subsubsection{Lichobežníková metóda}
+Lichobežníková metóda je definovaná ako 
+$$ \int_{a}^{b} f(x)  dx \approx \frac{h}{2} \left( f(x_0) + 2 \sum_{i=1}^{n-1}
+f(x_i) + f(x_n) \right) $$
+
+kde $h = \frac{b-a}{n}$ je velkosť kroku a $x_0, x_1, \dots, x_{n}$ sú rovnomerne vzdialené podintervaly v intervale $[a,b]$.\cite{Bsp}
+\subsection{Simpsonova metóda}
+Simpsonova metóda je definovaná ako
+$$ \int_{a}^{b} f(x) , dx \approx \frac{h}{3} \left( f(x_0) + 4[f(x_1) + f(x_3) + \dots+ f(x_{n-1})] +2[f(x_2) + f(x_4) + \dots+ f(x_{n-2})] + f(x_{n}) \right) $$
+kde $h = \frac{b-a}{n}$ je velkosť kroku a $x_0, x_1, \dots, x_{n}$ sú rovnomerne vzdialené podintervaly v intervale $[a,b]$.\cite{Bsp}
+\subsubsection{Algoritmus}
+
+V prvom kroku inicializujeme našu funkciu, ktorú budeme aproximovať. Následne definujeme hornú, dolnú hranicu integrálu a presnosť epsilon. Zvolíme náhodné čislo počtu intervalov prvej iterácie, toto číslo musí byť násobok 2 kvôli Simpsonovej metóde. Vypočítame h a vygenerujeme pole od dolnej po hornú hranicu s krokom h. Za využitia vstavanej funkcie \emph{arrayfun} namapujeme zadanú funkciu z úlohy na body vzniknutých podintervalov. Toto vráti hodnoty funkcie v daných bodoch. Inicializujeme prvú iteráciu lichobežníkovej a Simpsonovej metódy. Pri Simpsonovej metóde v sumách používame trik s krokom indexu poľa aby sme dostali párne body a následne nepárne. Taktiež vytvoríme pomocné premenné do ktorých budeme ukladať predošlé hodnoty aproximovaných integrálov. V cyckle while, ktorý sa zastaví ak obidve metódy splnia definovanú presnosť, presunieme predošlé hodnoty integrálov do pomocných premenných. Ďalej zvýšime počet intervalov o dvojnásobok a znova prepočítame krok h. Vypočítame aproximované hodnoty integrálov. Iterujeme pokiaľ obidve metódy dosiahnu definovanú presnosť.
+
+Výsledky a počet intervalov vypíšeme na obrazovku.
+Zobrazíme výsledky z Octave funkcií \emph{trapz}, \emph{quadv} a analytické riešenie. 
+
+
+\subsection{Výsledky}
+V tabulke nižšie sú získane výsledky z našej implementácie vstavaných funkcií a počet potrebných intervalov. V porovnaní vidíme rozdiely v presnosti, ktoré sa avšak objavujú až pri 5. desatinom čísle.
+
+
+\begin{tabular}{|l|S[round-precision=6]|}
+  
+  \hline
+  \textbf{Hodnota} & \textbf{Výsledok} \\
+  \hline
+  I\_simpson & 0.99050077 \\
+  I\_trapezoid & 0.99041122 \\
+  number\_of\_intervals & 80 \\
+  matlab\_trapezoid & 0.99041122 \\
+  matlab\_simpson & 0.99050069 \\
+  analytical\_solution & 0.99050073 \\
+  \hline
+\end{tabular}
+\subsection{Záver}
+Na požadovanú presnosť je potrebných 80 intervalov. Zistili sme že najbližšie riešenie k analytickému je Simpsonova metóda implementovaná cez funkciu \emph{quadv}. Lichobežníková metóda je menej presná ako Simpsonova metóda. Výsledky z Octave funkcie \emph{trapz},  sú rovnaké ako výsledky z našej vlastnej implementácie.
+
+% Bibliography
+%-----------------------------------------------------------------
+\begin{thebibliography}{99}
+\bibitem{Bsp} Buša, J., Pirč, V. and Schrötter, Š. (no date) \emph{Numerické metódy, pravdepodobnosť a matematická štatistika}
+\end{thebibliography}
+
+\end{document}
