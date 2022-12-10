@@ -37,4 +37,4 @@ I_simpson
 I_trapezoid
 matlab_trapezoid=trapz(intervals,f_i)
 matlab_simpson=quadv(my_func,0,5)
-analytical_solution=(1/2 * log(29/4))
+analytical_solution=(1/2 * log(4+5**2))-(1/2 * log(4))
