@@ -32,7 +32,7 @@ while abs(I_trapezoid-I_trapezoid_previous) > epsilon && abs(I_simpson-I_simpson
   I_trapezoid = (h/2)*(f_i(1)+2*sum(f_i(2:end-1))+f_i(end));
 endwhile
 
-
+format long
 I_simpson
 I_trapezoid
 number_of_intervals
